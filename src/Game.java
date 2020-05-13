@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
     public static final Random RANDOM = new Random();
@@ -20,9 +18,7 @@ public class Game {
         wordToFind = nextWordToFind();
         wordFound = new char[wordToFind.length()];
 
-        for (int i = 0; i < wordFound.length; i++) {
-            wordFound[i] = '_';
-        }
+        Arrays.fill(wordFound, '*');
     }
 
     public boolean wordFound() {
@@ -59,20 +55,22 @@ public class Game {
     }
 
     public void play(){
+        newGame();
         try(Scanner scanner = new Scanner(System.in)){
             while (nbErrors < MAX_ERRORS){
+                System.out.println("Hasło do zgadnięcia: " + '\n' + wordFoundContent());
                 System.out.println("Podaj literę: ");
-                String letter = scanner.next();
+                String letter = scanner.next().toUpperCase();
 
                 if (letter.length()>1){
                     letter = letter.substring(0,1);
                 }
 
                 enter(letter);
-                System.out.println("\n" + wordFoundContent());
 
                 if(wordFound()){
                     System.out.println("Wygrałeś");
+                    System.out.println("Hasło: " + wordToFind);
                     break;
                 }else {
                     System.out.println("Pozostało prób: " + (MAX_ERRORS - nbErrors));
