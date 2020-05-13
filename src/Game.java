@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class Game {
@@ -7,9 +10,29 @@ public class Game {
     private char[] wordFound;
     private int nbErrors;
     private ArrayList<String> letters = new ArrayList<>();
+    private ArrayList<String> lettersFromFile = new ArrayList<>();
 
     private String nextWordToFind() {
         return Keywords.WORDS[RANDOM.nextInt(Keywords.WORDS.length)];
+    }
+
+    public void addWord(String word) {
+        lettersFromFile.add(word);
+    }
+
+    private String wordToFindFromFile() {
+        String fileName = "words.txt";
+        try (
+                var fileReader = new FileReader(fileName);
+                var bufferedReader = new BufferedReader(fileReader);
+        ) {
+            while (bufferedReader.readLine() != null) {
+                addWord(bufferedReader.readLine());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lettersFromFile.get(RANDOM.nextInt(lettersFromFile.size())).toUpperCase();
     }
 
     public void newGame() {
