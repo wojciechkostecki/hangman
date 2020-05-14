@@ -5,12 +5,48 @@ import java.util.*;
 
 public class Game {
     public static final Random RANDOM = new Random();
+    private final static int PLAY = 1;
+    private final static int EXIT = 2;
+    Scanner scanner = new Scanner(System.in);
     public static final int MAX_ERRORS = 8;
     private String wordToFind;
     private char[] wordFound;
     private int nbErrors;
     private ArrayList<String> letters = new ArrayList<>();
     private ArrayList<String> lettersFromFile = new ArrayList<>();
+
+    public void hangman(){
+    boolean isException = true;
+        while (isException) {
+        try {
+            int option = -1;
+            while (option != EXIT) {
+
+                System.out.println("Wybierz opcję:");
+                System.out.println("1 - graj");
+                System.out.println("2 - wyjście z programu.");
+                option = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (option) {
+                    case EXIT:
+                        System.out.println("Bye bye!");
+                        scanner.close();
+                        break;
+                    case PLAY:
+                        play();
+                        break;
+                    default:
+                        System.out.println("Wybrałeś nieprawidłową opcję");
+                }
+            }
+            isException = false;
+        } catch (InputMismatchException e) {
+            System.out.println("Podałeś niepoprawny znak.");
+            scanner.nextLine();
+        }
+    }
+}
 
     private String nextWordToFind() {
         return Keywords.WORDS[RANDOM.nextInt(Keywords.WORDS.length)];
@@ -79,30 +115,32 @@ public class Game {
 
     public void play(){
         newGame();
-        try(Scanner scanner = new Scanner(System.in)){
-            while (nbErrors < MAX_ERRORS){
+        try {
+            while (nbErrors < MAX_ERRORS) {
                 System.out.println("Hasło do zgadnięcia: " + '\n' + wordFoundContent());
                 System.out.println("Podaj literę: ");
                 String letter = scanner.next().toUpperCase();
 
-                if (letter.length()>1){
-                    letter = letter.substring(0,1);
+                if (letter.length() > 1) {
+                    letter = letter.substring(0, 1);
                 }
 
                 enter(letter);
 
-                if(wordFound()){
+                if (wordFound()) {
                     System.out.println("Wygrałeś");
                     System.out.println("Hasło: " + wordToFind);
                     break;
-                }else {
+                } else {
                     System.out.println("Pozostało prób: " + (MAX_ERRORS - nbErrors));
                 }
             }
-            if (nbErrors == MAX_ERRORS){
+            if (nbErrors == MAX_ERRORS) {
                 System.out.println("Przegrałeś");
                 System.out.println("Szukane słowo: " + wordToFind);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
