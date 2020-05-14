@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.util.*;
 
 public class Game {
-    public static final Random RANDOM = new Random();
+    private static final Random RANDOM = new Random();
+
     private final static int PLAY = 1;
     private final static int EXIT = 2;
+
     Scanner scanner = new Scanner(System.in);
-    public static final int MAX_ERRORS = 8;
+
+    private static final int MAX_ERRORS = 8;
     private String wordToFind;
     private char[] wordFound;
     private int nbErrors;
@@ -24,7 +27,7 @@ public class Game {
 
                 System.out.println("Wybierz opcję:");
                 System.out.println("1 - graj");
-                System.out.println("2 - wyjście z programu.");
+                System.out.println("2 - koniec programu");
                 option = scanner.nextInt();
                 scanner.nextLine();
 
@@ -52,7 +55,7 @@ public class Game {
         return Keywords.WORDS[RANDOM.nextInt(Keywords.WORDS.length)];
     }
 
-    public void addWord(String word) {
+    private void addWord(String word) {
         lettersFromFile.add(word);
     }
 
@@ -71,7 +74,7 @@ public class Game {
         return lettersFromFile.get(RANDOM.nextInt(lettersFromFile.size())).toUpperCase();
     }
 
-    public void newGame() {
+    private void newGame() {
         nbErrors = 0;
         letters.clear();
         wordToFind = nextWordToFind();
@@ -80,7 +83,7 @@ public class Game {
         Arrays.fill(wordFound, '*');
     }
 
-    public boolean wordFound() {
+    private boolean wordFound() {
         return wordToFind.contentEquals(new String(wordFound));
     }
 
@@ -113,7 +116,7 @@ public class Game {
         }
     }
 
-    public void play(){
+    private void play(){
         newGame();
         try {
             while (nbErrors < MAX_ERRORS) {
