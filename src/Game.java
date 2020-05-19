@@ -8,48 +8,48 @@ public class Game {
 
     private final static int PLAY = 1;
     private final static int EXIT = 2;
-
-    Scanner scanner = new Scanner(System.in);
-
     private static final int MAX_ERRORS = 8;
+
+    private Scanner scanner = new Scanner(System.in);
+
     private String wordToFind;
-    private char[] wordFound;
-    private int nbErrors;
+    private char[] guessedWord;
+    private int mistakesMade;
     private ArrayList<String> letters = new ArrayList<>();
     private ArrayList<String> lettersFromFile = new ArrayList<>();
 
-    public void hangman(){
-    boolean isException = true;
+    public void hangman() {
+        boolean isException = true;
         while (isException) {
-        try {
-            int option = -1;
-            while (option != EXIT) {
+            try {
+                int option = -1;
+                while (option != EXIT) {
 
-                System.out.println("Wybierz opcję:");
-                System.out.println("1 - graj");
-                System.out.println("2 - koniec programu");
-                option = scanner.nextInt();
-                scanner.nextLine();
+                    System.out.println("Wybierz opcję:");
+                    System.out.println("1 - graj");
+                    System.out.println("2 - koniec programu");
+                    option = scanner.nextInt();
+                    scanner.nextLine();
 
-                switch (option) {
-                    case EXIT:
-                        System.out.println("Bye bye!");
-                        scanner.close();
-                        break;
-                    case PLAY:
-                        play();
-                        break;
-                    default:
-                        System.out.println("Wybrałeś nieprawidłową opcję");
+                    switch (option) {
+                        case EXIT:
+                            System.out.println("Bye bye!");
+                            scanner.close();
+                            break;
+                        case PLAY:
+                            play();
+                            break;
+                        default:
+                            System.out.println("Wybrałeś nieprawidłową opcję");
+                    }
                 }
+                isException = false;
+            } catch (InputMismatchException e) {
+                System.out.println("Podałeś niepoprawny znak.");
+                scanner.nextLine();
             }
-            isException = false;
-        } catch (InputMismatchException e) {
-            System.out.println("Podałeś niepoprawny znak.");
-            scanner.nextLine();
         }
     }
-}
 
     private String nextWordToFind() {
         return Keywords.WORDS[RANDOM.nextInt(Keywords.WORDS.length)];
@@ -75,75 +75,71 @@ public class Game {
     }
 
     private void newGame() {
-        nbErrors = 0;
+        mistakesMade = 0;
         letters.clear();
         wordToFind = nextWordToFind();
-        wordFound = new char[wordToFind.length()];
+        guessedWord = new char[wordToFind.length()];
 
-        Arrays.fill(wordFound, '*');
+        Arrays.fill(guessedWord, '*');
     }
 
     private boolean wordFound() {
-        return wordToFind.contentEquals(new String(wordFound));
+        return wordToFind.contentEquals(new String(guessedWord));
     }
 
     private String wordFoundContent() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < wordFound.length; i++) {
-            sb.append(wordFound[i]);
+        for (int i = 0; i < guessedWord.length; i++) {
+            sb.append(guessedWord[i]);
 
-            if (i < wordFound.length - 1) {
+            if (i < guessedWord.length - 1) {
                 sb.append(" ");
             }
         }
         return sb.toString();
     }
 
-    private void enter(String c){
-        if(!letters.contains(c)){
-            if (wordToFind.contains(c)){
+    private void checkLetter(String c) {
+        if (!letters.contains(c)) {
+            if (wordToFind.contains(c)) {
                 int index = wordToFind.indexOf(c);
 
-                while (index >= 0){
-                    wordFound[index] = c.charAt(0);
-                    index = wordToFind.indexOf(c,index + 1);
+                while (index >= 0) {
+                    guessedWord[index] = c.charAt(0);
+                    index = wordToFind.indexOf(c, index + 1);
                 }
             } else {
-                nbErrors++;
+                mistakesMade++;
             }
             letters.add(c);
         }
     }
 
-    private void play(){
+    private void play() {
         newGame();
-        try {
-            while (nbErrors < MAX_ERRORS) {
-                System.out.println("Hasło do zgadnięcia: " + '\n' + wordFoundContent());
-                System.out.println("Podaj literę: ");
-                String letter = scanner.next().toUpperCase();
+        while (mistakesMade < MAX_ERRORS) {
+            System.out.println("Hasło do zgadnięcia: " + '\n' + wordFoundContent());
+            System.out.println("Podaj literę: ");
+            String letter = scanner.next().toUpperCase();
 
-                if (letter.length() > 1) {
-                    letter = letter.substring(0, 1);
-                }
-
-                enter(letter);
-
-                if (wordFound()) {
-                    System.out.println("Wygrałeś");
-                    System.out.println("Hasło: " + wordToFind);
-                    break;
-                } else {
-                    System.out.println("Pozostało prób: " + (MAX_ERRORS - nbErrors));
-                }
+            if (letter.length() > 1) {
+                letter = letter.substring(0, 1);
             }
-            if (nbErrors == MAX_ERRORS) {
-                System.out.println("Przegrałeś");
-                System.out.println("Szukane słowo: " + wordToFind);
+
+            checkLetter(letter);
+
+            if (wordFound()) {
+                System.out.println("Wygrałeś");
+                System.out.println("Hasło: " + wordToFind);
+                break;
+            } else {
+                System.out.println("Pozostało prób: " + (MAX_ERRORS - mistakesMade));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        if (mistakesMade == MAX_ERRORS) {
+            System.out.println("Przegrałeś");
+            System.out.println("Szukane słowo: " + wordToFind);
         }
     }
 }
