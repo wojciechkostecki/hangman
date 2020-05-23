@@ -15,48 +15,41 @@ public class Game {
     private String wordToFind;
     private char[] guessedWord;
     private int mistakesMade;
-    private ArrayList<String> letters = new ArrayList<>();
-    private ArrayList<String> lettersFromFile = new ArrayList<>();
+    private ArrayList<String> words = new ArrayList<>();
+    private ArrayList<String> wordsFromFile = new ArrayList<>();
+    Keywords keywords = new Keywords();
 
     public void hangman() {
-        boolean isException = true;
-        while (isException) {
-            try {
-                int option = -1;
-                while (option != EXIT) {
+        int option = -1;
+        while (option != EXIT) {
 
-                    System.out.println("Wybierz opcję:");
-                    System.out.println("1 - graj");
-                    System.out.println("2 - koniec programu");
-                    option = scanner.nextInt();
-                    scanner.nextLine();
+            printOption();
 
-                    switch (option) {
-                        case EXIT:
-                            System.out.println("Bye bye!");
-                            scanner.close();
-                            break;
-                        case PLAY:
-                            play();
-                            break;
-                        default:
-                            System.out.println("Wybrałeś nieprawidłową opcję");
-                    }
-                }
-                isException = false;
-            } catch (InputMismatchException e) {
-                System.out.println("Podałeś niepoprawny znak.");
-                scanner.nextLine();
+            option = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (option) {
+                case EXIT:
+                    System.out.println("Bye bye!");
+                    scanner.close();
+                    break;
+                case PLAY:
+                    play();
+                    break;
+                default:
+                    System.out.println("Wybrałeś nieprawidłową opcję");
             }
         }
     }
 
-    private String nextWordToFind() {
-        return Keywords.WORDS[RANDOM.nextInt(Keywords.WORDS.length)];
+    private void printOption(){
+        System.out.println("Wybierz opcję:");
+        System.out.println("1 - graj");
+        System.out.println("2 - koniec programu");
     }
 
     private void addWord(String word) {
-        lettersFromFile.add(word);
+        wordsFromFile.add(word);
     }
 
     private String wordToFindFromFile() {
@@ -71,13 +64,13 @@ public class Game {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return lettersFromFile.get(RANDOM.nextInt(lettersFromFile.size())).toUpperCase();
+        return wordsFromFile.get(RANDOM.nextInt(wordsFromFile.size())).toUpperCase();
     }
 
     private void newGame() {
         mistakesMade = 0;
-        letters.clear();
-        wordToFind = nextWordToFind();
+        words.clear();
+        wordToFind = keywords.nextWordToFind();
         guessedWord = new char[wordToFind.length()];
 
         Arrays.fill(guessedWord, '*');
@@ -101,7 +94,7 @@ public class Game {
     }
 
     private void checkLetter(String c) {
-        if (!letters.contains(c)) {
+        if (!words.contains(c)) {
             if (wordToFind.contains(c)) {
                 int index = wordToFind.indexOf(c);
 
@@ -112,7 +105,7 @@ public class Game {
             } else {
                 mistakesMade++;
             }
-            letters.add(c);
+            words.add(c);
         }
     }
 
