@@ -1,11 +1,6 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 public class Game {
-    private static final Random RANDOM = new Random();
-
     private final static int PLAY = 1;
     private final static int EXIT = 2;
     private static final int MAX_ERRORS = 8;
@@ -16,8 +11,9 @@ public class Game {
     private char[] guessedWord;
     private int mistakesMade;
     private ArrayList<String> words = new ArrayList<>();
-    private ArrayList<String> wordsFromFile = new ArrayList<>();
+
     Keywords keywords = new Keywords();
+    WordsFromFile wordsFromFile = new WordsFromFile();
 
     public void hangman() {
         int option = -1;
@@ -48,29 +44,10 @@ public class Game {
         System.out.println("2 - koniec programu");
     }
 
-    private void addWord(String word) {
-        wordsFromFile.add(word);
-    }
-
-    private String wordToFindFromFile() {
-        String fileName = "words.txt";
-        try (
-                var fileReader = new FileReader(fileName);
-                var bufferedReader = new BufferedReader(fileReader);
-        ) {
-            while (bufferedReader.readLine() != null) {
-                addWord(bufferedReader.readLine());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return wordsFromFile.get(RANDOM.nextInt(wordsFromFile.size())).toUpperCase();
-    }
-
     private void newGame() {
         mistakesMade = 0;
         words.clear();
-        wordToFind = keywords.nextWordToFind();
+        wordToFind = wordsFromFile.nextWordToFind();
         guessedWord = new char[wordToFind.length()];
 
         Arrays.fill(guessedWord, '*');
