@@ -7,19 +7,19 @@ public class Game {
 
     private Scanner scanner = new Scanner(System.in);
 
-    private String wordToFind;
+    private String wordToGuess;
     private char[] guessedWord;
     private int mistakesMade;
     private ArrayList<String> words = new ArrayList<>();
 
-    Keywords keywords = new Keywords();
-    WordsFromFile wordsFromFile = new WordsFromFile();
+    private Keywords keywords = new Keywords();
+    private WordsFromFile wordsFromFile = new WordsFromFile();
 
     public void hangman() {
         int option = -1;
         while (option != EXIT) {
 
-            printOption();
+            printOptions();
 
             option = scanner.nextInt();
             scanner.nextLine();
@@ -38,7 +38,7 @@ public class Game {
         }
     }
 
-    private void printOption(){
+    private void printOptions(){
         System.out.println("Wybierz opcję:");
         System.out.println("1 - graj");
         System.out.println("2 - koniec programu");
@@ -47,14 +47,14 @@ public class Game {
     private void newGame() {
         mistakesMade = 0;
         words.clear();
-        wordToFind = wordsFromFile.nextWordToFind();
-        guessedWord = new char[wordToFind.length()];
+        wordToGuess = wordsFromFile.getWordToGuess();
+        guessedWord = new char[wordToGuess.length()];
 
         Arrays.fill(guessedWord, '*');
     }
 
-    private boolean wordFound() {
-        return wordToFind.contentEquals(new String(guessedWord));
+    private boolean isWordFound() {
+        return wordToGuess.contentEquals(new String(guessedWord));
     }
 
     private String wordFoundContent() {
@@ -72,12 +72,12 @@ public class Game {
 
     private void checkLetter(String c) {
         if (!words.contains(c)) {
-            if (wordToFind.contains(c)) {
-                int index = wordToFind.indexOf(c);
+            if (wordToGuess.contains(c)) {
+                int index = wordToGuess.indexOf(c);
 
                 while (index >= 0) {
                     guessedWord[index] = c.charAt(0);
-                    index = wordToFind.indexOf(c, index + 1);
+                    index = wordToGuess.indexOf(c, index + 1);
                 }
             } else {
                 mistakesMade++;
@@ -99,9 +99,9 @@ public class Game {
 
             checkLetter(letter);
 
-            if (wordFound()) {
+            if (isWordFound()) {
                 System.out.println("Wygrałeś");
-                System.out.println("Hasło: " + wordToFind);
+                System.out.println("Hasło: " + wordToGuess);
                 break;
             } else {
                 System.out.println("Pozostało prób: " + (MAX_ERRORS - mistakesMade));
@@ -109,7 +109,7 @@ public class Game {
         }
         if (mistakesMade == MAX_ERRORS) {
             System.out.println("Przegrałeś");
-            System.out.println("Szukane słowo: " + wordToFind);
+            System.out.println("Szukane słowo: " + wordToGuess);
         }
     }
 }
