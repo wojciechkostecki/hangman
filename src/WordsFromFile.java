@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class WordsFromFile implements WordsSource {
-    Random RANDOM = new Random();
+    private Random RANDOM = new Random();
     private ArrayList<String> wordsFromFile = new ArrayList<>();
 
     private void addWord(String word) {
